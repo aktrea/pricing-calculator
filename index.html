@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing Calculator</title>
+  <style>
+    /* Styling for the form and button */
+    #pricing-calculator-widget input {
+      padding: 10px;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+
+    #pricing-calculator-widget button {
+      padding: 10px 20px;
+      background-color: #0073e6;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+    }
+
+    #pricing-calculator-widget button:hover {
+      background-color: #005bb5;
+    }
+
+    #pricing-calculator-widget p {
+      font-size: 16px;
+      color: #333;
+    }
+
+    /* Table styling */
+    #pricing-table table {
+      width: 100%;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    #pricing-table th, #pricing-table td {
+      text-align: left;
+      padding: 15px;
+    }
+
+    #pricing-table th {
+      background-color: #0073e6;
+      color: white;
+      font-weight: bold;
+    }
+
+    #pricing-table td {
+      background-color: #f9f9f9;
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    #pricing-table tr:hover td {
+      background-color: #e3f2fd;
+    }
+  </style>
+</head>
+<body>
+  <div id="pricing-calculator-widget">
+    <!-- User Input Form -->
+    <label for="userCount">Enter number of users:</label>
+    <input type="number" id="userCount" name="userCount" min="1" placeholder="Enter users">
+    <button id="calculate-btn">Calculate Fee</button>
+
+    <!-- Calculation Result Display -->
+    <div id="calculation-result"></div>
+
+    <!-- Expandable Button for Pricing Table -->
+    <button id="toggle-pricing-btn">Show Volume Pricing</button>
+
+    <!-- Pricing Table (Hidden by Default) -->
+    <div id="pricing-table" style="display: none;"></div>
+  </div>
+
+  <script>
+    // Corrected Pricing Data
+    const pricingData = [
+      { range: "1-50", cost: 500 },
+      { range: "51-100", cost: 350 },
+      { range: "101-250", cost: 250 },
+      { range: "251-500", cost: 200 },
+      { range: "501-1000", cost: 150 },
+      { range: "1000+", cost: 100 }
+    ];
+
+    // Event listener to calculate price
+    document.getElementById('calculate-btn').addEventListener('click', calculatePrice);
+
+    // Event listener to toggle pricing table
+    document.getElementById('toggle-pricing-btn').addEventListener('click', togglePricingTable);
+
+    // Function to calculate the price based on the user input
+    function calculatePrice() {
+      const userCount = document.getElementById('userCount').value;
+      let totalCost = 0;
+      let breakdown = '';
+
+      if (!userCount || userCount <= 0) {
+        document.getElementById('calculation-result').innerHTML = '<p style="color: red;">Please enter a valid number of users.</p>';
+        return;
+      }
+
+      if (userCount <= 50) {
+        totalCost = userCount * 500;
+        breakdown = `${userCount} users at INR 500 each`;
+      } else if (userCount <= 100) {
+        totalCost = userCount * 350;
+        breakdown = `${userCount} users at INR 350 each`;
+      } else if (userCount <= 250) {
+        totalCost = userCount * 250;
+        breakdown = `${userCount} users at INR 250 each`;
+      } else if (userCount <= 500) {
+        totalCost = userCount * 200;
+        breakdown = `${userCount} users at INR 200 each`;
+      } else if (userCount <= 1000) {
+        totalCost = userCount * 150;
+        breakdown = `${userCount} users at INR 150 each`;
+      } else {
+        totalCost = userCount * 100;
+        breakdown = `${userCount} users at INR 100 each`;
+      }
+
+      document.getElementById('calculation-result').innerHTML = `
+        <p><strong>Total Fee: INR ${totalCost}</strong></p>
+        <p>(${breakdown})</p>
+      `;
+    }
+
+    // Function to toggle the volume pricing table
+    function togglePricingTable() {
+      const pricingTable = document.getElementById('pricing-table');
+      const toggleBtn = document.getElementById('toggle-pricing-btn');
+
+      if (pricingTable.style.display === "none") {
+        displayPricingTable(); // Display the table
+        pricingTable.style.display = "block";
+        toggleBtn.textContent = "Hide Volume Pricing";
+      } else {
+        pricingTable.style.display = "none";
+        toggleBtn.textContent = "Show Volume Pricing";
+      }
+    }
+
+    // Function to display the pricing table
+    function displayPricingTable() {
+      const pricingTable = document.getElementById('pricing-table');
+      let table = `
+        <table>
+          <thead>
+            <tr>
+              <th>Users</th>
+              <th>Cost (INR)</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      pricingData.forEach(row => {
+        table += `
+          <tr>
+            <td>${row.range}</td>
+            <td>${row.cost}/user</td>
+          </tr>
+        `;
+      });
+
+      table += `
+          </tbody>
+        </table>
+      `;
+
+      pricingTable.innerHTML = table;
+    }
+  </script>
+</body>
+</html>
